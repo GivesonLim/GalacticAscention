@@ -1,6 +1,7 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems; // ✅ Needed for navigation fix
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -64,10 +65,14 @@ public class PlayerHealth : MonoBehaviour
     void Die()
     {
         Debug.Log("Player Died");
+
         if (gameOverPanel != null)
         {
             gameOverPanel.SetActive(true);
         }
+
+        // ✅ Ensure UI buttons remain clickable when time is paused
+        EventSystem.current.sendNavigationEvents = true;
 
         Time.timeScale = 0f;
     }

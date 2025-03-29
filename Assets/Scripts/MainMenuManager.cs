@@ -1,34 +1,16 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;  // For loading scenes
-using UnityEngine.UI;              // For working with UI buttons
+using UnityEngine.SceneManagement;
 
 public class MainMenuManager : MonoBehaviour
 {
-    public Button playButton;    // Play Game Button
-    public Button quitButton;    // Quit Button
-    public GameObject mainMenuPanel; // Main Menu Panel UI element
-
-    void Start()
+    public void PlayGame()
     {
-        // Add listeners to buttons
-        playButton.onClick.AddListener(OnPlayButtonClicked);
-        quitButton.onClick.AddListener(OnQuitButtonClicked);
-
-        // Pause the game when the main menu is active
-        Time.timeScale = 0f;  // Stops the game
+        SceneManager.LoadScene("Main_Scene"); // use exact name from Build Settings
     }
 
-    // When the "Play Game" button is clicked
-    void OnPlayButtonClicked()
+    public void QuitGame()
     {
-        Time.timeScale = 1f;  // Resumes the game when Play is clicked
-        SceneManager.LoadScene("GameScene");  // Replace with your actual game scene name
-    }
-
-    // When the "Quit" button is clicked
-    void OnQuitButtonClicked()
-    {
-        Debug.Log("Exiting game...");
-        Application.Quit();  // Quit the game
+        Debug.Log("Quitting game...");
+        Application.Quit();
     }
 }

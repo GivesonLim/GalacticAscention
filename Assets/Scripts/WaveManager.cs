@@ -1,23 +1,27 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class WaveManager : MonoBehaviour
 {
     [Header("Wave Settings")]
     public int totalWaves = 5;
-    public float waveDuration = 120f; // 2 minutes per wave
+    public float waveDuration = 120f;
 
     [Header("UI")]
     public Text timerText;
     public Text waveText;
+    public Text waveBannerText;
 
     [Header("Difficulty Scaling")]
-    public EnemySpawner enemySpawner; // Assign in Inspector
-    public float enemySpawnRateMultiplier = 0.9f; // Spawn faster each wave
+    public EnemySpawner enemySpawner;
+    public float enemySpawnRateMultiplier = 0.9f;
+    public float enemySpeedMultiplierPerWave = 1.05f; // +5% per wave
 
     private float currentWaveTime;
     private int currentWave = 1;
     private bool waveActive = true;
+    private float currentSpeedMultiplier = 1f;
 
     void Start()
     {
@@ -45,10 +49,16 @@ public class WaveManager : MonoBehaviour
         waveActive = true;
         UpdateWaveUI();
 
-        // Increase difficulty
         if (enemySpawner != null)
         {
             enemySpawner.spawnRate *= enemySpawnRateMultiplier;
+            currentSpeedMultiplier *= enemySpeedMultiplierPerWave;
+            enemySpawner.enemySpeedMultiplier = currentSpeedMultiplier;
+        }
+
+        if (waveBannerText != null)
+        {
+            StartCoroutine(AnimateWaveBanner("WAVE " + currentWave));
         }
     }
 
@@ -94,6 +104,34 @@ public class WaveManager : MonoBehaviour
         if (waveText != null)
             waveText.text = "All Waves Complete";
 
+        if (waveBannerText != null)
+            waveBannerText.text = "All Waves Complete";
+
         Time.timeScale = 0f;
+    }
+
+    IEnumerator AnimateWaveBanner(string message)
+    {
+        waveBannerText.text = message;
+
+        Color color = waveBannerText.color;
+        color.a = 0;
+        waveBannerText.color = color;
+
+        while (waveBannerText.color.a < 1f)
+        {
+            color.a += Time.deltaTime * 2f;
+            waveBannerText.color = color;
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(1.5f);
+
+        while (waveBannerText.color.a > 0f)
+        {
+            color.a -= Time.deltaTime * 2f;
+            waveBannerText.color = color;
+            yield return null;
+        }
     }
 }
