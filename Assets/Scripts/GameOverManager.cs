@@ -4,7 +4,8 @@ using UnityEngine.UI; // Needed for working with Text UI
 
 public class GameOverManager : MonoBehaviour
 {
-    public Text finalScoreText; // UI text element to show the final score
+    public Text FinalScoreText; // UI text element to show the final score
+    public ScoreManager scoreManager; // Reference to ScoreManager to get the final score
 
     public void RestartGame()
     {
@@ -15,15 +16,15 @@ public class GameOverManager : MonoBehaviour
     public void ReturnToMainMenu()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("Main_Menu"); // Go to the main menu (make sure to use correct scene name)
+        SceneManager.LoadScene("Main_Menu"); // Go to the main menu (make sure to use the correct scene name)
     }
 
     // Method to display final score after player dies
-    public void ShowFinalScore(int score)
+    public void ShowFinalScore()
     {
-        if (finalScoreText != null)
+        if (FinalScoreText != null && scoreManager != null)
         {
-            finalScoreText.text = "Final Score: " + score.ToString(); // Display final score
+            FinalScoreText.text = "Final Score: " + scoreManager.GetScore().ToString(); // Display final score
         }
     }
 }

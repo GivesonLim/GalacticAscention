@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8205545324493645354}
   - component: {fileID: 3643190094538430876}
   - component: {fileID: 2657413145903762285}
-  - component: {fileID: -2647237758188209899}
+  - component: {fileID: -7360233814615908163}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Enemy
@@ -183,7 +183,8 @@ MonoBehaviour:
   enemyProjectilePrefab: {fileID: 1728480303671926888, guid: 03d11c473fc789b4aa0ade0f15e15e1b, type: 3}
   shootPoint: {fileID: 2639325187498146636}
   enemyDestroyedSound: {fileID: 8300000, guid: 965730fb55e0c2c4195eac1b0b1088bd, type: 3}
---- !u!82 &-2647237758188209899
+  explosionEffect: {fileID: 6312291523723615129, guid: 73827ec68b1041d4b9a80e4a421b4567, type: 3}
+--- !u!82 &-7360233814615908163
 AudioSource:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

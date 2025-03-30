@@ -16,6 +16,12 @@ public class ScoreManager : MonoBehaviour
     // Method to retrieve the current score
     public int GetScore()
     {
-        return score;
+        return score;  // Return the current score value
+    }
+
+    // Ensure that the ScoreManager persists across scenes
+    void Awake()
+    {
+        DontDestroyOnLoad(gameObject);  // Keeps ScoreManager alive between scene transitions
     }
 }

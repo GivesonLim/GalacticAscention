@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;  // Add this to handle scene transitions
 using System.Collections;
 
 public class WaveManager : MonoBehaviour
@@ -17,6 +18,9 @@ public class WaveManager : MonoBehaviour
     public EnemySpawner enemySpawner;
     public float enemySpawnRateMultiplier = 0.9f;
     public float enemySpeedMultiplierPerWave = 1.05f; // +5% per wave
+
+    [Header("Player Health")]
+    public PlayerHealth playerHealth; // Reference to the PlayerHealth script
 
     private float currentWaveTime;
     private int currentWave = 1;
@@ -56,6 +60,12 @@ public class WaveManager : MonoBehaviour
             enemySpawner.enemySpeedMultiplier = currentSpeedMultiplier;
         }
 
+        // Restore player health at the end of the wave
+        if (playerHealth != null)
+        {
+            playerHealth.RestoreFullHealth(); // Call method to restore full health
+        }
+
         if (waveBannerText != null)
         {
             StartCoroutine(AnimateWaveBanner("WAVE " + currentWave));
@@ -70,7 +80,7 @@ public class WaveManager : MonoBehaviour
         {
             waveActive = false;
             Debug.Log("All waves complete!");
-            GameOverWin();
+            GameOverWin();  // Call the Game Over win method here
             return;
         }
 
@@ -105,9 +115,11 @@ public class WaveManager : MonoBehaviour
             waveText.text = "All Waves Complete";
 
         if (waveBannerText != null)
-            waveBannerText.text = "All Waves Complete";
+            waveBannerText.text = "Victory!";  // Set victory message
 
-        Time.timeScale = 0f;
+        // Transition to winning scene
+        Time.timeScale = 0f;  // Pause the game
+        SceneManager.LoadScene("Winning_Scene");  // Load the Winning Scene
     }
 
     IEnumerator AnimateWaveBanner(string message)

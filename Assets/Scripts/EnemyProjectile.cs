@@ -6,19 +6,19 @@ public class EnemyProjectile : MonoBehaviour
     public Transform target;      // The player, target of the projectile
     public float lifeTime = 5f;   // Time before the projectile is destroyed if it doesn't hit anything
     public AudioClip shootSound;  // Reference to the shooting sound effect
-    private AudioSource audioSource;  // AudioSource to play the sound
 
     private Rigidbody2D rb;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();  // Get the Rigidbody2D component for movement
-        audioSource = GetComponent<AudioSource>();  // Get the AudioSource component
 
-        // Play the shooting sound when the enemy fires a projectile
+        // Create a temporary AudioSource to play the shoot sound
+        AudioSource audioSource = gameObject.AddComponent<AudioSource>();  // Add AudioSource component dynamically
         if (audioSource != null && shootSound != null)
         {
             audioSource.PlayOneShot(shootSound);  // Play the shoot sound
+            Destroy(audioSource, shootSound.length);  // Destroy the AudioSource after the sound has finished
         }
 
         if (target != null)

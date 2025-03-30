@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEngine.EventSystems;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -24,8 +22,6 @@ public class PlayerHealth : MonoBehaviour
     private Color originalColor;
     private bool isFlashing = false;
 
-    private ScoreManager scoreManager;
-
     void Start()
     {
         currentHealth = maxHealth;
@@ -36,8 +32,6 @@ public class PlayerHealth : MonoBehaviour
 
         if (spriteRenderer != null)
             originalColor = spriteRenderer.color;
-
-        scoreManager = FindObjectOfType<ScoreManager>(); // Get the score manager
     }
 
     public void TakeDamage(int damageAmount)
@@ -69,21 +63,26 @@ public class PlayerHealth : MonoBehaviour
     void Die()
     {
         Debug.Log("Player Died");
-
         if (gameOverPanel != null)
         {
             gameOverPanel.SetActive(true);
         }
 
-        // Call GameOverManager to show the final score
+        // Ensure the GameOverManager is called to show the final score
         GameOverManager gameOverManager = FindObjectOfType<GameOverManager>();
-        if (gameOverManager != null && scoreManager != null)
+        if (gameOverManager != null)
         {
-            gameOverManager.ShowFinalScore(scoreManager.GetScore()); // Display the score
+            gameOverManager.ShowFinalScore(); // Display the final score
         }
 
-        EventSystem.current.sendNavigationEvents = true;
-        Time.timeScale = 0f; // Pause the game
+        Time.timeScale = 0f;
+    }
+
+    // Method to restore full health
+    public void RestoreFullHealth()
+    {
+        currentHealth = maxHealth;
+        UpdateHealthBar();
     }
 
     System.Collections.IEnumerator FlashMultipleTimes()
