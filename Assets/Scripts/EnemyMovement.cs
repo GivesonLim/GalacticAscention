@@ -8,15 +8,18 @@ public class EnemyMovement : MonoBehaviour
     public GameObject enemyProjectilePrefab;  // Reference to the enemy projectile prefab
     public Transform shootPoint;              // Point where the projectile is shot from
 
+    public AudioClip enemyDestroyedSound;  // Sound for when the enemy is destroyed
+    private AudioSource audioSource;        // AudioSource component to play the sound
+
     private bool isInRange = false;
     private ScoreManager scoreManager;
 
-    private float speedMultiplier = 1f; // Multiplier added for scaling speed
+    private float speedMultiplier = 1f;
 
     void Start()
     {
-        // Get the ScoreManager to update the score
-        scoreManager = FindObjectOfType<ScoreManager>();
+        audioSource = GetComponent<AudioSource>(); // Get AudioSource component
+        scoreManager = FindObjectOfType<ScoreManager>(); // Get the score manager
     }
 
     void Update()
@@ -29,7 +32,6 @@ public class EnemyMovement : MonoBehaviour
 
             if (Vector3.Distance(transform.position, player.position) > stopDistance)
             {
-                // Apply speed multiplier here
                 transform.position = Vector3.MoveTowards(transform.position, player.position, moveSpeed * speedMultiplier * Time.deltaTime);
             }
             else
@@ -59,22 +61,10 @@ public class EnemyMovement : MonoBehaviour
         if (player != null && shootPoint != null)
         {
             GameObject projectile = Instantiate(enemyProjectilePrefab, shootPoint.position, Quaternion.identity);
-
-            if (projectile != null)
+            EnemyProjectile projectileScript = projectile.GetComponent<EnemyProjectile>();
+            if (projectileScript != null)
             {
-                EnemyProjectile projectileScript = projectile.GetComponent<EnemyProjectile>();
-                if (projectileScript != null)
-                {
-                    projectileScript.target = player;
-                }
-                else
-                {
-                    Debug.LogError("EnemyProjectile script missing on the projectile prefab!");
-                }
-            }
-            else
-            {
-                Debug.LogError("Projectile not instantiated!");
+                projectileScript.target = player;
             }
         }
     }
@@ -83,25 +73,27 @@ public class EnemyMovement : MonoBehaviour
     {
         if (other.CompareTag("PlayerProjectile"))
         {
-            Destroy(gameObject);
-            Destroy(other.gameObject);
+            // Play enemy destruction sound when destroyed by projectile
+            if (audioSource != null && enemyDestroyedSound != null)
+            {
+                audioSource.PlayOneShot(enemyDestroyedSound);
+            }
+
+            Destroy(gameObject);  // Destroy the enemy
+            Destroy(other.gameObject);  // Destroy the player projectile
 
             if (scoreManager != null)
             {
                 scoreManager.AddScore(100);
             }
-
-            Debug.Log("Enemy destroyed by projectile");
         }
 
         if (other.CompareTag("Player"))
         {
-            Destroy(gameObject);
-            Debug.Log("Enemy collided with player and was destroyed");
+            Destroy(gameObject);  // Destroy the enemy if it collides with the player
         }
     }
 
-    // ✅ Called by spawner to scale enemy speed per wave
     public void SetSpeedMultiplier(float multiplier)
     {
         speedMultiplier = multiplier;

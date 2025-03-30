@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using UnityEngine.EventSystems; // ✅ Needed for navigation fix
+using UnityEngine.EventSystems;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -24,6 +24,8 @@ public class PlayerHealth : MonoBehaviour
     private Color originalColor;
     private bool isFlashing = false;
 
+    private ScoreManager scoreManager;
+
     void Start()
     {
         currentHealth = maxHealth;
@@ -34,6 +36,8 @@ public class PlayerHealth : MonoBehaviour
 
         if (spriteRenderer != null)
             originalColor = spriteRenderer.color;
+
+        scoreManager = FindObjectOfType<ScoreManager>(); // Get the score manager
     }
 
     public void TakeDamage(int damageAmount)
@@ -71,10 +75,15 @@ public class PlayerHealth : MonoBehaviour
             gameOverPanel.SetActive(true);
         }
 
-        // ✅ Ensure UI buttons remain clickable when time is paused
-        EventSystem.current.sendNavigationEvents = true;
+        // Call GameOverManager to show the final score
+        GameOverManager gameOverManager = FindObjectOfType<GameOverManager>();
+        if (gameOverManager != null && scoreManager != null)
+        {
+            gameOverManager.ShowFinalScore(scoreManager.GetScore()); // Display the score
+        }
 
-        Time.timeScale = 0f;
+        EventSystem.current.sendNavigationEvents = true;
+        Time.timeScale = 0f; // Pause the game
     }
 
     System.Collections.IEnumerator FlashMultipleTimes()

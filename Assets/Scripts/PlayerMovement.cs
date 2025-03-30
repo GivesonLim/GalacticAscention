@@ -8,11 +8,16 @@ public class PlayerMovement : MonoBehaviour
     public GameObject projectilePrefab;  // Reference to the projectile prefab
     public Transform firePoint;         // FirePoint where the projectile will spawn
 
+    public AudioClip playerDestroyedSound;  // Sound effect for player destruction
+    public AudioClip playerDamagedSound;    // Sound effect for player damage
+    private AudioSource audioSource;        // AudioSource component to play the sound
+
     private Rigidbody2D rb;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        audioSource = GetComponent<AudioSource>(); // Get AudioSource component
     }
 
     void Update()
@@ -26,12 +31,10 @@ public class PlayerMovement : MonoBehaviour
         // Shoot the projectile when spacebar is pressed
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            Debug.Log("Spacebar pressed! Shooting projectile..."); // Add this debug log
             ShootProjectile();
         }
     }
 
-    // Rotate the ship to face the mouse position smoothly
     void RotateToMouse()
     {
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition); // Get mouse position in world space
@@ -39,35 +42,54 @@ public class PlayerMovement : MonoBehaviour
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg; // Get angle between the two points in degrees
 
         // Adjust the angle so the ship is facing the mouse position correctly
-        angle -= 90f; // Offset the rotation by 90 degrees to fix orientation
+        angle -= 90f;
 
         // Smoothly rotate the player ship to face the mouse
-        Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle); // Create a target rotation
-        rb.rotation = Mathf.LerpAngle(rb.rotation, targetRotation.eulerAngles.z, rotationSpeed * Time.deltaTime); // Smoothly rotate towards the target angle
+        Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle);
+        rb.rotation = Mathf.LerpAngle(rb.rotation, targetRotation.eulerAngles.z, rotationSpeed * Time.deltaTime);
     }
 
-    // WASD movement control
     void MoveWithWASD()
     {
-        float moveX = Input.GetAxis("Horizontal"); // A/D or Left/Right Arrow keys
-        float moveY = Input.GetAxis("Vertical");   // W/S or Up/Down Arrow keys
+        float moveX = Input.GetAxis("Horizontal");
+        float moveY = Input.GetAxis("Vertical");
 
         Vector2 moveDirection = new Vector2(moveX, moveY).normalized;
-        rb.linearVelocity = moveDirection * moveSpeed; // Fixed typo: should be velocity instead of linearVelocity
+        rb.linearVelocity = moveDirection * moveSpeed; // Move the player
     }
 
-    // Shoot a projectile in the direction the player is facing (towards the mouse)
     void ShootProjectile()
     {
         if (projectilePrefab != null && firePoint != null)
         {
-            // Instantiate the projectile at the firePoint position and firePoint's rotation
-            Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
-            Debug.Log("Projectile Fired!");
+            Instantiate(projectilePrefab, firePoint.position, firePoint.rotation); // Shoot the projectile
         }
-        else
+    }
+
+    // Call this method when the player collides with something that destroys it
+    public void DestroyPlayer()
+    {
+        // Play the player destruction sound
+        if (audioSource != null && playerDestroyedSound != null)
         {
-            Debug.LogError("Projectile Prefab or FirePoint not assigned!");
+            audioSource.PlayOneShot(playerDestroyedSound);
         }
+
+        // Destroy the player (you can add any other logic here, like playing a death animation)
+        Destroy(gameObject);
+    }
+
+    // Method for taking damage
+    public void TakeDamage(int damage)
+    {
+        // Play the player damage sound
+        if (audioSource != null && playerDamagedSound != null)
+        {
+            audioSource.PlayOneShot(playerDamagedSound);
+        }
+
+        // You can subtract health here (if you have a health system)
+        // For now, we will just print a message
+        Debug.Log("Player took damage!");
     }
 }

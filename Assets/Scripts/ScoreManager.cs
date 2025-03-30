@@ -12,4 +12,10 @@ public class ScoreManager : MonoBehaviour
         score += points;
         scoreText.text = "Score: " + score.ToString();  // Update the score UI text
     }
+
+    // Method to retrieve the current score
+    public int GetScore()
+    {
+        return score;
+    }
 }

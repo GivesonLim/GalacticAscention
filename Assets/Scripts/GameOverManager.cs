@@ -1,19 +1,29 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI; // Needed for working with Text UI
 
 public class GameOverManager : MonoBehaviour
 {
+    public Text finalScoreText; // UI text element to show the final score
+
     public void RestartGame()
     {
-        // Reloads the current game scene
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        Time.timeScale = 1f; // Resume time in case it was paused
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Restart the current scene
     }
 
     public void ReturnToMainMenu()
     {
-        // Load main menu scene
-        SceneManager.LoadScene("Main_Menu");
-        Time.timeScale = 1f; // Resume time
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("Main_Menu"); // Go to the main menu (make sure to use correct scene name)
+    }
+
+    // Method to display final score after player dies
+    public void ShowFinalScore(int score)
+    {
+        if (finalScoreText != null)
+        {
+            finalScoreText.text = "Final Score: " + score.ToString(); // Display final score
+        }
     }
 }

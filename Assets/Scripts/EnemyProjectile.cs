@@ -5,20 +5,26 @@ public class EnemyProjectile : MonoBehaviour
     public float speed = 5f;      // Speed of the projectile
     public Transform target;      // The player, target of the projectile
     public float lifeTime = 5f;   // Time before the projectile is destroyed if it doesn't hit anything
+    public AudioClip shootSound;  // Reference to the shooting sound effect
+    private AudioSource audioSource;  // AudioSource to play the sound
 
     private Rigidbody2D rb;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();  // Get the Rigidbody2D component for movement
+        audioSource = GetComponent<AudioSource>();  // Get the AudioSource component
+
+        // Play the shooting sound when the enemy fires a projectile
+        if (audioSource != null && shootSound != null)
+        {
+            audioSource.PlayOneShot(shootSound);  // Play the shoot sound
+        }
 
         if (target != null)
         {
-            // Calculate the direction from the projectile to the player
             Vector2 direction = (target.position - transform.position).normalized;
-
-            // Apply velocity to the projectile to move it towards the player
-            rb.linearVelocity = direction * speed;
+            rb.linearVelocity = direction * speed;  // Move towards the player
 
             // Rotate the projectile to face the direction it's traveling
             RotateProjectile(direction);
@@ -34,7 +40,6 @@ public class EnemyProjectile : MonoBehaviour
         transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
     }
 
-    // ✅ Use trigger instead of collision since we're using Kinematic rigidbody
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
@@ -42,7 +47,7 @@ public class EnemyProjectile : MonoBehaviour
             PlayerHealth playerHealth = collision.GetComponent<PlayerHealth>();
             if (playerHealth != null)
             {
-                playerHealth.TakeDamage(10); // Deal damage
+                playerHealth.TakeDamage(10); // Deal damage to player
             }
 
             Destroy(gameObject); // Destroy projectile only

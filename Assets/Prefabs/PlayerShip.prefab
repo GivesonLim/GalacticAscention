@@ -212,6 +212,7 @@ MonoBehaviour:
   rotationSpeed: 5
   projectilePrefab: {fileID: 7242720101277888557, guid: 45d9de1729962be49b60e7539ff59e7f, type: 3}
   firePoint: {fileID: 4749258871006348517}
+  playerDestroyedSound: {fileID: 8300000, guid: 7eb1a6aa1af69574ba4578a30e5866d2, type: 3}
 --- !u!114 &3517574009712228575
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -227,3 +228,8 @@ MonoBehaviour:
   maxHealth: 100
   healthSlider: {fileID: 0}
   gameOverPanel: {fileID: 0}
+  spriteRenderer: {fileID: 0}
+  flashColor: {r: 1, g: 0, b: 0, a: 1}
+  flashDuration: 0.1
+  flashCount: 3
+  cameraShake: {fileID: 0}
