@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;  // Add this to handle scene transitions
 using System.Collections;
 
 public class WaveManager : MonoBehaviour
@@ -17,10 +16,15 @@ public class WaveManager : MonoBehaviour
     [Header("Difficulty Scaling")]
     public EnemySpawner enemySpawner;
     public float enemySpawnRateMultiplier = 0.9f;
-    public float enemySpeedMultiplierPerWave = 1.05f; // +5% per wave
+    public float enemySpeedMultiplierPerWave = 1.05f;
 
     [Header("Player Health")]
-    public PlayerHealth playerHealth; // Reference to the PlayerHealth script
+    public PlayerHealth playerHealth;
+
+    [Header("Meteor Settings")]
+    public GameObject meteorPrefab;
+    public float baseMeteorInterval = 10f;
+    private float meteorTimer = 0f;
 
     private float currentWaveTime;
     private int currentWave = 1;
@@ -38,6 +42,13 @@ public class WaveManager : MonoBehaviour
 
         currentWaveTime -= Time.deltaTime;
         UpdateTimerUI();
+
+        meteorTimer += Time.deltaTime;
+        if (meteorTimer >= baseMeteorInterval)
+        {
+            SpawnMeteor();
+            meteorTimer = 0f;
+        }
 
         if (currentWaveTime <= 0f)
         {
@@ -60,10 +71,9 @@ public class WaveManager : MonoBehaviour
             enemySpawner.enemySpeedMultiplier = currentSpeedMultiplier;
         }
 
-        // Restore player health at the end of the wave
         if (playerHealth != null)
         {
-            playerHealth.RestoreFullHealth(); // Call method to restore full health
+            playerHealth.RestoreFullHealth();
         }
 
         if (waveBannerText != null)
@@ -80,9 +90,11 @@ public class WaveManager : MonoBehaviour
         {
             waveActive = false;
             Debug.Log("All waves complete!");
-            GameOverWin();  // Call the Game Over win method here
+            GameOverWin();
             return;
         }
+
+        baseMeteorInterval = Mathf.Max(3f, baseMeteorInterval * 0.95f);
 
         StartWave();
     }
@@ -115,11 +127,10 @@ public class WaveManager : MonoBehaviour
             waveText.text = "All Waves Complete";
 
         if (waveBannerText != null)
-            waveBannerText.text = "Victory!";  // Set victory message
+            waveBannerText.text = "Victory!";
 
-        // Transition to winning scene
-        Time.timeScale = 0f;  // Pause the game
-        SceneManager.LoadScene("Winning_Scene");  // Load the Winning Scene
+        Time.timeScale = 0f;
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Winning_Scene");
     }
 
     IEnumerator AnimateWaveBanner(string message)
@@ -145,5 +156,43 @@ public class WaveManager : MonoBehaviour
             waveBannerText.color = color;
             yield return null;
         }
+    }
+
+    void SpawnMeteor()
+    {
+        if (meteorPrefab == null || playerHealth == null)
+            return;
+
+        Vector2 spawnPos = GetRandomEdgePosition();
+        Instantiate(meteorPrefab, spawnPos, Quaternion.identity);
+    }
+
+    Vector2 GetRandomEdgePosition()
+    {
+        Camera cam = Camera.main;
+        float buffer = 1f;
+
+        float screenLeft = cam.ViewportToWorldPoint(new Vector3(0, 0, 0)).x - buffer;
+        float screenRight = cam.ViewportToWorldPoint(new Vector3(1, 0, 0)).x + buffer;
+        float screenTop = cam.ViewportToWorldPoint(new Vector3(0, 1, 0)).y + buffer;
+        float screenBottom = cam.ViewportToWorldPoint(new Vector3(0, 0, 0)).y - buffer;
+
+        int edge = Random.Range(0, 4);
+        Vector2 pos = Vector2.zero;
+
+        switch (edge)
+        {
+            case 0: pos = new Vector2(Random.Range(screenLeft, screenRight), screenTop); break;
+            case 1: pos = new Vector2(Random.Range(screenLeft, screenRight), screenBottom); break;
+            case 2: pos = new Vector2(screenLeft, Random.Range(screenBottom, screenTop)); break;
+            case 3: pos = new Vector2(screenRight, Random.Range(screenBottom, screenTop)); break;
+        }
+
+        return pos;
+    }
+
+    public int CurrentWaveNumber()
+    {
+        return currentWave;
     }
 }

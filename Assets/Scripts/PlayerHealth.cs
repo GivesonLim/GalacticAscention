@@ -17,7 +17,7 @@ public class PlayerHealth : MonoBehaviour
     public int flashCount = 3;
 
     [Header("Camera Shake")]
-    public CameraShake cameraShake; // Assign your main camera here
+    public CameraShake cameraShake; // Reference to the CameraShake component
 
     private Color originalColor;
     private bool isFlashing = false;
@@ -43,8 +43,8 @@ public class PlayerHealth : MonoBehaviour
         if (spriteRenderer != null)
             StartCoroutine(FlashMultipleTimes());
 
-        if (cameraShake != null)
-            cameraShake.TriggerShake();
+        if (cameraShake != null) // Check if the CameraShake reference is set
+            cameraShake.TriggerShake(); // Trigger camera shake when the player takes damage
 
         if (currentHealth <= 0)
         {
@@ -66,13 +66,6 @@ public class PlayerHealth : MonoBehaviour
         if (gameOverPanel != null)
         {
             gameOverPanel.SetActive(true);
-        }
-
-        // Ensure the GameOverManager is called to show the final score
-        GameOverManager gameOverManager = FindObjectOfType<GameOverManager>();
-        if (gameOverManager != null)
-        {
-            gameOverManager.ShowFinalScore(); // Display the final score
         }
 
         Time.timeScale = 0f;

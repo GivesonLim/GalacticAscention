@@ -674,7 +674,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   finalScoreText: {fileID: 2057944975}
-  victoryMusic: {fileID: 8300000, guid: ebc326b236266ab4e93fb0bda5a3c9f7, type: 3}
+  scoreManager: {fileID: 2039608136}
 --- !u!4 &1174792485
 Transform:
   m_ObjectHideFlags: 0
@@ -1159,6 +1159,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scoreText: {fileID: 2057944975}
+  finalScoreText: {fileID: 2057944975}
 --- !u!4 &2039608137
 Transform:
   m_ObjectHideFlags: 0

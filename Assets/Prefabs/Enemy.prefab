@@ -182,8 +182,8 @@ MonoBehaviour:
   player: {fileID: 0}
   enemyProjectilePrefab: {fileID: 1728480303671926888, guid: 03d11c473fc789b4aa0ade0f15e15e1b, type: 3}
   shootPoint: {fileID: 2639325187498146636}
-  enemyDestroyedSound: {fileID: 8300000, guid: 965730fb55e0c2c4195eac1b0b1088bd, type: 3}
   explosionEffect: {fileID: 6312291523723615129, guid: 73827ec68b1041d4b9a80e4a421b4567, type: 3}
+  explosionSFX: {fileID: 8300000, guid: 965730fb55e0c2c4195eac1b0b1088bd, type: 3}
 --- !u!82 &-7360233814615908163
 AudioSource:
   m_ObjectHideFlags: 0
@@ -191,7 +191,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6291452815974733450}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 965730fb55e0c2c4195eac1b0b1088bd, type: 3}

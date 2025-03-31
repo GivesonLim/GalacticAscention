@@ -8,23 +8,23 @@ public class EnemyMovement : MonoBehaviour
     public GameObject enemyProjectilePrefab;  // Reference to the enemy projectile prefab
     public Transform shootPoint;              // Point where the projectile is shot from
 
-    public AudioClip enemyDestroyedSound;  // Sound for when the enemy is destroyed
-    private AudioSource audioSource;        // AudioSource to play the sound
-
-    public GameObject explosionEffect;    // Explosion effect (GameObject with Animator)
+    public GameObject explosionEffect;    // Reference to the static explosion effect prefab
+    public AudioClip explosionSFX;    // Explosion sound effect
     private bool isInRange = false;
     private ScoreManager scoreManager;
 
     private float speedMultiplier = 1f;
+    private bool isDestroyed = false;  // Flag to track if the enemy is destroyed
 
     void Start()
     {
         scoreManager = FindObjectOfType<ScoreManager>(); // Get the score manager
-        audioSource = GetComponent<AudioSource>(); // Get the AudioSource component attached to the enemy prefab
     }
 
     void Update()
     {
+        if (isDestroyed) return;  // Stop movement if the enemy is destroyed
+
         if (player != null)
         {
             Vector3 direction = (player.position - transform.position).normalized;
@@ -74,7 +74,6 @@ public class EnemyMovement : MonoBehaviour
     {
         if (other.CompareTag("PlayerProjectile"))
         {
-            PlayDestructionSound();  // Play sound when the enemy is destroyed
             PlayExplosionEffect();   // Play the explosion effect
             DestroyEnemy();  // Call method to destroy the enemy
             Destroy(other.gameObject);  // Destroy the player projectile
@@ -87,7 +86,6 @@ public class EnemyMovement : MonoBehaviour
 
         if (other.CompareTag("Player"))
         {
-            PlayDestructionSound();  // Play sound when the enemy collides with player
             PlayExplosionEffect();   // Play the explosion effect
             DestroyEnemy();  // Call method to destroy the enemy if it collides with the player
         }
@@ -98,28 +96,27 @@ public class EnemyMovement : MonoBehaviour
         speedMultiplier = multiplier;
     }
 
-    void PlayDestructionSound()
-    {
-        // Play the enemy destruction sound only if it's not null
-        if (audioSource != null && enemyDestroyedSound != null)
-        {
-            audioSource.PlayOneShot(enemyDestroyedSound);  // Play the destruction sound once
-        }
-    }
-
     void PlayExplosionEffect()
     {
-        if (explosionEffect != null)
+        if (explosionEffect != null && explosionSFX != null)
         {
             // Instantiate the explosion effect at the enemy's position
             GameObject explosion = Instantiate(explosionEffect, transform.position, Quaternion.identity);
-            Destroy(explosion, 1f);  // Destroy the explosion effect after 1 second
+
+            // Play the explosion sound immediately
+            AudioSource.PlayClipAtPoint(explosionSFX, transform.position);
+
+            // Optionally set the parent to the enemy so it follows the enemy's destruction
+            explosion.transform.parent = transform;
+
+            // Destroy the explosion effect after 1 second
+            Destroy(explosion, 1f);  // Adjust the duration as needed
         }
     }
 
     void DestroyEnemy()
     {
-        // Destroy the enemy after the length of the audio clip to let it finish
-        Destroy(gameObject, audioSource.clip.length);  // Delay destruction by the length of the sound
+        isDestroyed = true;  // Set the flag to stop movement
+        Destroy(gameObject, 0.1f);  // Short delay before destruction to allow sound and explosion to finish
     }
 }
