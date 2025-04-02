@@ -149,7 +149,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   totalWaves: 5
-  waveDuration: 10
+  waveDuration: 60
   timerText: {fileID: 1611269812}
   waveText: {fileID: 1519433170}
   waveBannerText: {fileID: 179437036}
